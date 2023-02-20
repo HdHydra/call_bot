@@ -13,6 +13,7 @@ class ImageGetState extends State<ImageGet> {
   bool isLoading = true;
   late List<dynamic> images = [];
   late List<dynamic> imageUrls = [];
+  int count = 1;
 
   @override
   void initState() {
@@ -21,7 +22,7 @@ class ImageGetState extends State<ImageGet> {
     headlessWebView = HeadlessInAppWebView(
         initialUrlRequest: URLRequest(
             url: Uri.parse(
-                "https://www.bing.com/images/search?q=${widget.query.replaceAll(' ', '+')}&qft=+filterui:color2-color+filterui:photo-photo+filterui:aspect-square&form=IRFLTR&first=1")),
+                "https://www.bing.com/images/search?q=${widget.query.replaceAll(' ', '+')}&qft=+filterui:color2-color&form=IRFLTR&first=$count")),
         onWebViewCreated: (controller) async {},
         onConsoleMessage: (controller, consoleMessage) {
           if (consoleMessage.message.contains('[Report Only]')) {
@@ -45,15 +46,25 @@ class ImageGetState extends State<ImageGet> {
     await headlessWebView?.run();
   }
 
-  Future reloadUrl() async {
+  //&qft=+filterui:color2-color+filterui:photo-photo+filterui:aspect-square&form=IRFLTR&first=$_count
+  Future reloadUrl(int _count) async {
     isLoading = true;
     var url = Uri.parse(
-        "https://www.bing.com/images/search?q=${widget.query.replaceAll(' ', '+')}&qft=+filterui:color2-color+filterui:photo-photo+filterui:aspect-square&form=IRFLTR&first=1");
+        "https://www.bing.com/images/search?q=${widget.query.replaceAll(' ', '+')}&qft=+filterui:color2-color&form=IRFLTR&first=$_count");
     await headlessWebView?.webViewController
         .loadUrl(urlRequest: URLRequest(url: url));
-    Future.delayed(Duration(seconds: 1), () async {
+    Future.delayed(Duration(seconds: 3), () async {
       await getImages();
-    });
+    },);
+  }
+
+  Future loadMore() async {
+    isLoading = true;
+    await headlessWebView?.webViewController
+        .evaluateJavascript(source: 'window.scrollTo(0, document.body.scrollHeight');
+    Future.delayed(Duration(seconds: 3), () async {
+      await getImages();
+    },);
   }
 
   Future reply() async {
@@ -68,7 +79,6 @@ class ImageGetState extends State<ImageGet> {
           source:
               'let count = 0; let imageURLs = [];let imageElements = document.querySelectorAll(\'.mimg:not([id])\');imageElements.forEach(function(imageElement) {imageURLs.push(imageElement.src);});imageURLs;');
 
-
       // for (int i = 0; i < 4; i++) {
       //   await headlessWebView?.webViewController.evaluateJavascript(
       //       source: 'window.scrollTo(0, document.body.scrollHeight;');
@@ -80,7 +90,7 @@ class ImageGetState extends State<ImageGet> {
       //   });
       // }
       setState(() {
-        imageUrls = images;
+        imageUrls.addAll(images);
       });
       // images = await headlessWebView?.webViewController.evaluateJavascript(
       //       source:
@@ -92,23 +102,39 @@ class ImageGetState extends State<ImageGet> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Call Bot'),
-        ),
-        body: GridView.builder(
-          itemCount: imageUrls.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 4.0,
-            mainAxisSpacing: 4.0,
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Call Bot'),
+      ),
+      body: Stack(
+        children: [
+          Expanded(
+            child: GridView.builder(
+              itemCount: imageUrls.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 4.0,
+                mainAxisSpacing: 4.0,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return Image.network(
+                  imageUrls[index],
+                  fit: BoxFit.cover,
+                );
+              },
+            ),
           ),
-          itemBuilder: (BuildContext context, int index) {
-            return Image.network(
-              imageUrls[index],
-              fit: BoxFit.cover,
-            );
-          },
-        ));
+          Positioned(
+              bottom: 20,
+              child: ElevatedButton(
+                onPressed: () {
+                  count = count + 1;
+                  reloadUrl(count);
+                },
+                child: Text('Load More'),
+              ))
+        ],
+      ),
+    );
   }
 }
