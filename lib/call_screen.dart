@@ -4,7 +4,6 @@ import 'text_to_speech.dart';
 import 'speech_to_text.dart';
 import 'login_page.dart';
 
-String _recognizedSpeech = 'Good Morning';
 
 class CallScreen extends StatefulWidget {
   const CallScreen({super.key});
@@ -20,6 +19,7 @@ class CallScreenState extends State<CallScreen> {
   double pad = 30;
   double bsize = 40;
   bool isLoading = true;
+  String _recognizedSpeech = 'Good Morning';
   final SpeechRecognition _speechRecognition = SpeechRecognition();
   TextToSpeech tts = TextToSpeech();
 
@@ -149,8 +149,13 @@ class CallScreenState extends State<CallScreen> {
                       ),
                       IconButton(
                         padding: EdgeInsets.all(pad),
-                        onPressed: () async {
-                          await reply();
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MyWebView(_recognizedSpeech),
+                            ),
+                          );
                         },
                         icon: const Icon(Icons.dialpad),
                         tooltip: 'Keypad',
@@ -207,18 +212,13 @@ class CallScreenState extends State<CallScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: CircleAvatar(
                       backgroundColor: Colors.green,
                       radius: 40,
                       child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MyWebView(),
-                            ),
-                          );
+                        onPressed: () async {
+                          await reply();
                         },
                         icon: const Icon(
                           Icons.call_outlined,
@@ -230,7 +230,7 @@ class CallScreenState extends State<CallScreen> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: CircleAvatar(
                         backgroundColor: Colors.red,
                         radius: 40,
