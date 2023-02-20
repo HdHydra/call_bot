@@ -13,6 +13,7 @@ class ImageGetState extends State<ImageGet> {
   bool isLoading = true;
   late List<dynamic> images = [];
   late List<dynamic> imageUrls = [];
+  int crossAxis = 3;
   int count = 1;
 
   @override
@@ -111,6 +112,16 @@ class ImageGetState extends State<ImageGet> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Call Bot'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.grid_view_outlined),
+            onPressed: () {
+              setState(() {
+                crossAxis = (crossAxis + 1) % 3;
+              });
+            },
+          )
+        ],
       ),
       body: Stack(
         children: [
@@ -118,7 +129,7 @@ class ImageGetState extends State<ImageGet> {
             child: GridView.builder(
               itemCount: imageUrls.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
+                crossAxisCount: crossAxis,
                 crossAxisSpacing: 4.0,
                 mainAxisSpacing: 4.0,
               ),
