@@ -53,18 +53,24 @@ class ImageGetState extends State<ImageGet> {
         "https://www.bing.com/images/search?q=${widget.query.replaceAll(' ', '+')}&qft=+filterui:color2-color&form=IRFLTR&first=$_count");
     await headlessWebView?.webViewController
         .loadUrl(urlRequest: URLRequest(url: url));
-    Future.delayed(Duration(seconds: 3), () async {
-      await getImages();
-    },);
+    Future.delayed(
+      Duration(seconds: 3),
+      () async {
+        await getImages();
+      },
+    );
   }
 
   Future loadMore() async {
     isLoading = true;
-    await headlessWebView?.webViewController
-        .evaluateJavascript(source: 'window.scrollTo(0, document.body.scrollHeight');
-    Future.delayed(Duration(seconds: 3), () async {
-      await getImages();
-    },);
+    await headlessWebView?.webViewController.evaluateJavascript(
+        source: 'window.scrollTo(0, document.body.scrollHeight');
+    Future.delayed(
+      Duration(seconds: 3),
+      () async {
+        await getImages();
+      },
+    );
   }
 
   Future reply() async {
@@ -125,14 +131,18 @@ class ImageGetState extends State<ImageGet> {
             ),
           ),
           Positioned(
-              bottom: 20,
+            bottom: 20,
+            right: 30,
+            child: Center(
               child: ElevatedButton(
                 onPressed: () {
                   count = count + 1;
                   reloadUrl(count);
                 },
                 child: Text('Load More'),
-              ))
+              ),
+            ),
+          )
         ],
       ),
     );
