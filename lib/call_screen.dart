@@ -211,7 +211,7 @@ class CallScreenState extends State<CallScreen> {
                     padding: EdgeInsets.all(pad),
                     onPressed: () async {
                       setState(() {
-                        _recognizedSpeech = wordGenerator.randomSentence(3);
+                        _recognizedSpeech = wordGenerator.randomSentence(2);
                       });
                       await reloadUrl();
                     },
