@@ -38,6 +38,8 @@ dependencies:
   flutter_inappwebview: ^5.7.2+3
   flutter_tts: ^3.6.3
   speech_to_text: ^6.1.1
+  word_generator:
+  chaleno:
 
 
 dev_dependencies:

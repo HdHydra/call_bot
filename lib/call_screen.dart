@@ -1,4 +1,6 @@
+import 'package:call_bot/image_scraping.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:word_generator/word_generator.dart';
 import 'package:flutter/material.dart';
 import 'text_to_speech.dart';
 import 'speech_to_text.dart';
@@ -22,11 +24,13 @@ class CallScreenState extends State<CallScreen> {
   String _recognizedSpeech = 'Good Morning';
   final SpeechRecognition _speechRecognition = SpeechRecognition();
   TextToSpeech tts = TextToSpeech();
+  final wordGenerator = WordGenerator();
+
 
   @override
   void initState() {
     super.initState();
-
+    initScrape();
     headlessWebView = HeadlessInAppWebView(
       initialUrlRequest: URLRequest(
           url: Uri.parse(
@@ -141,7 +145,12 @@ class CallScreenState extends State<CallScreen> {
                       IconButton(
                         padding: EdgeInsets.all(pad),
                         onPressed: () {
-                          tts.speak(_result);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ImageGet(_recognizedSpeech),
+                            ),
+                          );
                         },
                         icon: const Icon(Icons.mic_off_outlined),
                         tooltip: 'Mute',
@@ -200,7 +209,12 @@ class CallScreenState extends State<CallScreen> {
                   ),
                   IconButton(
                     padding: EdgeInsets.all(pad),
-                    onPressed: () {},
+                    onPressed: () async {
+                      setState(() {
+                        _recognizedSpeech = wordGenerator.randomSentence(3);
+                      });
+                      await reloadUrl();
+                    },
                     icon: const Icon(Icons.record_voice_over),
                     tooltip: 'Record',
                     iconSize: bsize,
@@ -237,9 +251,6 @@ class CallScreenState extends State<CallScreen> {
                         child: IconButton(
                           onPressed: () {
                             tts.stop();
-                            setState(() {
-                              _result = 'Call Ended';
-                            });
                             ScaffoldMessenger.of(context).clearSnackBars();
                           },
                           icon: const Icon(

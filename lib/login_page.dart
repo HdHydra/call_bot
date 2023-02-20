@@ -18,6 +18,8 @@ class _MyWebViewState extends State<MyWebView> {
   @override
   void initState() {
     super.initState();
+
+
     setState(() {
       returnString = widget.recognizedSpeech;
       loginUrl = "https://you.com/api/auth/login?returnTo=%2Fsearch%3Fq%3D${returnString.replaceAll(' ', '%2B')}%26tbm%3Dyouchat";
