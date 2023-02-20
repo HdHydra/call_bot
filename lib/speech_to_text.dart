@@ -25,7 +25,7 @@ class SpeechRecognition {
             completer.complete(result.recognizedWords);
           }
         },
-        listenFor: Duration(seconds: 20),
+        listenFor: Duration(seconds: 30),
         pauseFor: Duration(seconds: 10),
         cancelOnError: true,
       );
