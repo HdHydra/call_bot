@@ -6,7 +6,6 @@ import 'text_to_speech.dart';
 import 'speech_to_text.dart';
 import 'login_page.dart';
 
-
 class CallScreen extends StatefulWidget {
   const CallScreen({super.key});
 
@@ -14,7 +13,7 @@ class CallScreen extends StatefulWidget {
   CallScreenState createState() => CallScreenState();
 }
 
-class CallScreenState extends State<CallScreen> {
+class CallScreenState extends State<CallScreen> with TickerProviderStateMixin {
   HeadlessInAppWebView? headlessWebView;
   String url = "";
   String _result = '';
@@ -25,7 +24,11 @@ class CallScreenState extends State<CallScreen> {
   final SpeechRecognition _speechRecognition = SpeechRecognition();
   TextToSpeech tts = TextToSpeech();
   final wordGenerator = WordGenerator();
-
+  List<IconData> loadingIcon = [
+    Icons.circle,
+    Icons.circle_outlined,
+  ];
+  int loading = 1;
 
   @override
   void initState() {
@@ -44,15 +47,22 @@ class CallScreenState extends State<CallScreen> {
         }
         if (consoleMessage.message.contains('geolocation')) {
           isLoading = false;
+          setState(() {
+            loading = 1;
+          });
           Future.delayed(const Duration(seconds: 8), () {
             getAnswer();
             print(_result);
           });
-          const snackBar = SnackBar(
-            content: Text('Please wait...'),
-            duration: Duration(seconds: 8),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          // const snackBar = SnackBar(
+          //   backgroundColor: Colors.black45,
+          //   content: Text(
+          //     'Please wait...',
+          //     style: TextStyle(color: Colors.white),
+          //   ),
+          //   duration: Duration(seconds: 8),
+          // );
+          // ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
       },
       onLoadStart: (controller, url) async {},
@@ -91,15 +101,16 @@ class CallScreenState extends State<CallScreen> {
 
   Future getAnswer() async {
     if (!isLoading) {
-
       if (headlessWebView?.isRunning() ?? false) {
-        String? answer = await headlessWebView?.webViewController.evaluateJavascript(
-              source:
-                  'var elements = document.querySelectorAll("#chatHistory > * > * > * > p");var mergedText = "";for (var i = 0; i < elements.length; i++) {mergedText += elements[i].innerText.trim().replace(/\\s+/g, " ");}');
+        String? answer = await headlessWebView?.webViewController
+            .evaluateJavascript(
+                source:
+                    'var elements = document.querySelectorAll("#chatHistory > * > * > * > p");var mergedText = "";for (var i = 0; i < elements.length; i++) {mergedText += elements[i].innerText.trim().replace(/\\s+/g, " ");}');
 
         // print(result);
         setState(() {
           _result = answer!;
+          loading = 0;
         });
       }
       Future.delayed(const Duration(milliseconds: 50), () {
@@ -114,6 +125,16 @@ class CallScreenState extends State<CallScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Call Bot'),
+        actions: <Widget>[
+          Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(right: 10),
+                child: Icon(loadingIcon[loading],),
+              )
+            ],
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -121,10 +142,10 @@ class CallScreenState extends State<CallScreen> {
             children: <Widget>[
               const SizedBox(height: 30),
               const CircleAvatar(
-                radius: 60,
-                backgroundColor: Colors.pink,
-                child: Icon(Icons.person, size: 60, semanticLabel: 'Call Bot'),
-              ),
+                  radius: 60,
+                  backgroundColor: Colors.pink,
+                  child:
+                      Icon(Icons.person, size: 60, semanticLabel: 'Call Bot')),
               const SizedBox(
                 height: 10,
               ),
@@ -162,7 +183,8 @@ class CallScreenState extends State<CallScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => MyWebView(_recognizedSpeech),
+                              builder: (context) =>
+                                  MyWebView(_recognizedSpeech),
                             ),
                           );
                         },

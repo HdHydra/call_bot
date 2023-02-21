@@ -30,7 +30,8 @@ class _MyWebViewState extends State<MyWebView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('In-App WebView'),
+        title: Text('Chat Bot'),
+        centerTitle: true,
       ),
       body: Stack(
         children: <Widget>[

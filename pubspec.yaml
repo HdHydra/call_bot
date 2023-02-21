@@ -39,7 +39,7 @@ dependencies:
   flutter_tts: ^3.6.3
   speech_to_text: ^6.1.1
   word_generator:
-  chaleno:
+#  flutter_gif: ^0.0.4
 
 
 dev_dependencies:
@@ -66,8 +66,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-#  assets:
-#    - assets/mipmap-hdpi/
+# assets:
+#    - assets/drawable/
 #    - assets/mipmap-mdpi/
 #    - assets/mipmap-xhdpi/
 #    - assets/mipmap-xxhdpi/
