@@ -1,16 +1,5 @@
 # call_bot
 
-A new Flutter project.
+Only for research purpose!
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+A bot which is capable of conversing with you as if you are calling another human being. Can recognize what you are saying even in offline. can get images from what you said as well as initiating a chat with a bot in InAppWebView. Used HeadlessWebView to get data from sources. 
